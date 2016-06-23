@@ -31,6 +31,8 @@ INSTALLED_APPS = (
     'hours',
     'employees',
     'api',
+    'agreements',
+    'client',
 )
 
 # Default + request

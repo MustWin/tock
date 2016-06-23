@@ -1,5 +1,5 @@
 from django.db import models
-import client
+
 
 
 class Agency(models.Model):
@@ -133,7 +133,7 @@ class Project(models.Model):
     start_date = models.DateField(blank=True, null=True, verbose_name='Project Start Date')
     end_date = models.DateField(blank=True, null=True, verbose_name='Project End Date')
     active = models.BooleanField(default=True)
-    
+
 
     notes_required = models.BooleanField(
         default=False,
