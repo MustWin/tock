@@ -133,6 +133,8 @@ class Project(models.Model):
     start_date = models.DateField(blank=True, null=True, verbose_name='Project Start Date')
     end_date = models.DateField(blank=True, null=True, verbose_name='Project End Date')
     active = models.BooleanField(default=True)
+    aggregate_hours_logged = models.IntegerField(default=0)
+    max_hours_restriction = models.BooleanField(default=False)
     notes_required = models.BooleanField(
         default=False,
         help_text='Check this if notes should be required for time entries against this project.  Note:  Checking this will enable notes to be displayed as well.'

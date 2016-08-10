@@ -96,6 +96,8 @@ class TimecardObject(models.Model):
         default='',
         help_text='Please provide details about how you spent your time.'
     )
+    timecard_object_submitted = models.BooleanField(default=False)
+
 
     def project_alerts(self):
         return self.project.alerts.all()
@@ -105,3 +107,34 @@ class TimecardObject(models.Model):
 
     def notes_list(self):
         return self.notes.split('\n')
+
+    def save(self, *args, **kwargs):
+        self.timecard_object_submitted = self.timecard.submitted
+        super(TimecardObject, self).save(*args, **kwargs)
+
+        """
+        If submitted attribute is True, uses hours_spent attribute from
+        TimecardObjects to update the aggregate_hours_logged attribute of the
+        Project model.
+        """
+        if self.timecard_object_submitted == True:
+            total_hours = 0
+            timecard_object_queryset = TimecardObject.objects.filter(project=self.project)
+            for timecard_object in timecard_object_queryset:
+                total_hours = total_hours + timecard_object.hours_spent
+            Project.objects.select_related().filter(
+                name=self.project).update(aggregate_hours_logged=total_hours)
+
+
+        """
+        Fetches Project queryset, checks to see if the latest addition to
+        the aggregate_hours_logged attribute (see above) requires an update
+        to the active attribute of that Project. If it does, the update is made.
+        """
+        project_queryset = Project.objects.get(name=self.project)
+
+        if self.timecard_object_submitted == True:
+            if project_queryset.max_hours_restriction == True:
+                if project_queryset.aggregate_hours_logged >= project_queryset.max_hours:
+                        Project.objects.select_related().filter(
+                            name=self.project).update(active=False)

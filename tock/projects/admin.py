@@ -13,6 +13,7 @@ class AccountingCodeAdmin(admin.ModelAdmin):
 
 class ProjectAdmin(admin.ModelAdmin):
     search_fields = ['name',]
+    readonly_fields = ['aggregate_hours_logged',]
 
 class ProjectAlertAdmin(admin.ModelAdmin):
     search_fields = ['title',]
