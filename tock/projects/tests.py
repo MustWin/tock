@@ -30,7 +30,10 @@ class ProjectsTest(WebTest):
             accounting_code=accounting_code,
             name='Test Project',
             start_date='2016-01-01',
-            end_date='2016-02-01'
+            end_date='2016-02-01',
+            max_hours_restriction=True,
+            max_hours=100,
+            aggregate_hours_logged=101,
         )
         self.project.save()
 
@@ -49,6 +52,7 @@ class ProjectsTest(WebTest):
         self.assertEqual(retrieved.start_date, datetime.date(2016, 1, 1))
         self.assertEqual(retrieved.end_date, datetime.date(2016, 2, 1))
         self.assertTrue(retrieved.accounting_code.billable)
+        self.assertFalse(retrieved.active)
 
     def test_is_billable(self):
         """
