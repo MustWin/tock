@@ -195,19 +195,18 @@ class TestAggregates(WebTest):
         self.user = UserFactory()
         self.billable_code = AccountingCodeFactory(billable=True)
         self.nonbillable_code = AccountingCodeFactory(billable=False)
-        self.billable_project = ProjectFactory(accounting_code=self.billable_code)
-        self.nonbillable_project = ProjectFactory(accounting_code=self.nonbillable_code)
+        self.project = ProjectFactory()
         self.period = ReportingPeriodFactory(start_date=datetime.datetime(2015, 11, 1))
         self.timecard = TimecardFactory(user=self.user, reporting_period=self.period)
         self.timecard_objects = [
             TimecardObjectFactory(
                 timecard=self.timecard,
-                project=self.billable_project,
+                project=self.project,
                 hours_spent=15,
             ),
             TimecardObjectFactory(
                 timecard=self.timecard,
-                project=self.nonbillable_project,
+                project=self.project,
                 hours_spent=5,
             ),
         ]
@@ -216,8 +215,6 @@ class TestAggregates(WebTest):
         response = self.app.get(reverse('HoursByQuarter'))
         self.assertEqual(len(response.json), 1)
         row = response.json[0]
-        self.assertEqual(row['billable'], 15)
-        self.assertEqual(row['nonbillable'], 5)
         self.assertEqual(row['total'], 20)
         self.assertEqual(row['year'], 2016)
         self.assertEqual(row['quarter'], 1)
@@ -234,7 +231,7 @@ class TestAggregates(WebTest):
         self.timecard_objects.append([
             TimecardObjectFactory(
                 timecard=timecard_unsubmit,
-                project=self.billable_project,
+                project=self.project,
                 hours_spent=10,
             ),
         ])
@@ -248,8 +245,6 @@ class TestAggregates(WebTest):
         self.assertEqual(len(response.json), 1)
         row = response.json[0]
         self.assertEqual(row['username'], str(self.user))
-        self.assertEqual(row['billable'], 15)
-        self.assertEqual(row['nonbillable'], 5)
         self.assertEqual(row['total'], 20)
         self.assertEqual(row['year'], 2016)
         self.assertEqual(row['quarter'], 1)
@@ -269,7 +264,7 @@ class TestAggregates(WebTest):
         self.timecard_objects.append([
             TimecardObjectFactory(
                 timecard=timecard_unsubmit,
-                project=self.billable_project,
+                project=self.project,
                 hours_spent=10,
             ),
         ])
@@ -284,7 +279,7 @@ class TestAggregates(WebTest):
         self.timecard_objects.append([
             TimecardObjectFactory(
                 timecard=timecard_submit,
-                project=self.billable_project,
+                project=self.project,
                 hours_spent=40,
             ),
         ])
