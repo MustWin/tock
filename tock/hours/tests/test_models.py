@@ -64,18 +64,34 @@ class TimecardTests(TestCase):
         self.user = get_user_model().objects.get(id=1)
         self.timecard = hours.models.Timecard.objects.create(
             user=self.user,
-            reporting_period=self.reporting_period)
+            reporting_period=self.reporting_period, submitted=True)
         self.project_1 = projects.models.Project.objects.get(name="openFEC")
-        self.project_2 = projects.models.Project.objects.get(
-            name="Peace Corps")
+        self.project_2 = projects.models.Project.objects.get(name="Peace Corps")
         self.timecard_object_1 = hours.models.TimecardObject.objects.create(
             timecard=self.timecard,
             project=self.project_1,
             hours_spent=12)
+        self.timecard_object_1.save()
         self.timecard_object_2 = hours.models.TimecardObject.objects.create(
             timecard=self.timecard,
             project=self.project_2,
             hours_spent=28)
+        self.timecard_object_2.save()
+
+    def test_aggregate_hours_spent(self):
+        """
+        Test that hours saved to TimecardObjects are then aggregated in the
+        corresponding projects.models.Project.aggregate_hours_logged
+        attribute.
+        """
+        agg_hours_project_1 = projects.models.Project.objects.get(
+                name=self.project_1.name).aggregate_hours_logged
+
+        agg_hours_project_2 = projects.models.Project.objects.get(
+                name=self.project_2.name).aggregate_hours_logged
+
+        self.assertEqual(agg_hours_project_1, 12)
+        self.assertNotEqual(agg_hours_project_2, 27)
 
     def test_time_card_saved(self):
         """ Test that the time card was saved correctly """
