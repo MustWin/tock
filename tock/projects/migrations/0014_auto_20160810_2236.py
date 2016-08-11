@@ -11,11 +11,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='project',
-            name='max_hours',
-            field=models.DecimalField(verbose_name='Maximum hour ceiling', decimal_places=2, help_text='When set and "Limit to maximum hours" is checked, this project will deactivate when this ceiling is reached.', blank=True, null=True, max_digits=10, default=0.0),
-        ),
+
         migrations.AlterField(
             model_name='project',
             name='active',
