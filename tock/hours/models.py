@@ -118,13 +118,13 @@ class TimecardObject(models.Model):
         Project model.
         """
         if self.timecard_object_submitted == True:
-            total_hours = 0
-            timecard_object_queryset = TimecardObject.objects.filter(project=self.project)
-            for timecard_object in timecard_object_queryset:
-                total_hours = total_hours + timecard_object.hours_spent
+            cur_hours_logged = Project.objects.get(
+                name=self.project).aggregate_hours_logged
+            add_hours_spent = self.hours_spent
+            new_hours_logged = cur_hours_logged + add_hours_spent
             Project.objects.select_related().filter(
-                name=self.project).update(aggregate_hours_logged=total_hours)
-
+                name=self.project).update(
+                aggregate_hours_logged=new_hours_logged)
 
         """
         Fetches Project queryset, checks to see if the latest addition to
