@@ -71,12 +71,11 @@ class TimecardTests(TestCase):
             timecard=self.timecard,
             project=self.project_1,
             hours_spent=12)
-        self.timecard_object_1.save()
         self.timecard_object_2 = hours.models.TimecardObject.objects.create(
             timecard=self.timecard,
             project=self.project_2,
             hours_spent=28)
-        self.timecard_object_2.save()
+        self.timecard.save()
 
     def test_aggregate_hours_spent(self):
         """

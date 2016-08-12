@@ -118,9 +118,9 @@ class TimecardObject(models.Model):
         Project model.
         """
         if self.timecard_object_submitted == True:
-            cur_hours_logged = Project.objects.get(
-                name=self.project).aggregate_hours_logged
-            add_hours_spent = self.hours_spent
+            cur_hours_logged = int(Project.objects.get(
+                name=self.project).aggregate_hours_logged)
+            add_hours_spent = int(self.hours_spent)
             new_hours_logged = cur_hours_logged + add_hours_spent
             Project.objects.select_related().filter(
                 name=self.project).update(
