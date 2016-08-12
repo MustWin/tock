@@ -227,16 +227,6 @@ class Project(models.Model):
         return self.accounting_code.billable
 
     def save(self, *args, **kwargs):
-        if self.aggregate_hours_logged == 0:
-            related_timecardobjects_queryset = hours.models.TimecardObject.objects.select_related().filter(
-                project=self.id)
-            for related_timecardobject in related_timecardobjects_queryset:
-                hours.models.TimecardObject.objects.update(timecard_object_submitted=True)
-                total_hours = 0
-                total_hours = total_hours + related_timecardobject.hours_spent
-            self.aggregate_hours_logged = total_hours
-
-
         if self.max_hours_restriction == True:
             if self.aggregate_hours_logged >= self.max_hours:
                 self.active = False
