@@ -1,8 +1,12 @@
 import csv
-import datetime
+from datetime import datetime, timedelta
 import io
 from itertools import chain
 from operator import attrgetter
+import requests
+import os
+import json
+
 
 # Create your views here.
 from django.contrib import messages
@@ -15,6 +19,8 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, FormView
 from django.db.models import Prefetch, Q
 
+
+
 from rest_framework.permissions import IsAuthenticated
 
 from tock.remote_user_auth import email_to_username
@@ -25,6 +31,24 @@ from .forms import (
     ReportingPeriodForm, ReportingPeriodImportForm, projects_as_choices,
     TimecardForm, TimecardFormSet, timecard_formset_factory
 )
+
+def float_api_get(request):
+    url = 'https://api.floatschedule.com/api/v1/'
+    headers = {'Authorization': 'Bearer ' + os.environ.get('FLOAT_API_KEY')}
+    endpoint = 'people'
+    r = requests.get(url + endpoint, headers=headers)
+    people_data = json.loads(r.content.decode().lower().strip())
+    clean_data = list()
+    q = len(people_data['people']) - 1
+    while q >= 0:
+        clean_data.append(
+            {'im': people_data['people'][q]['im'],
+                'people_id': people_data['people'][q]['people_id']
+            }
+            )
+        q -= 1
+
+    return HttpResponse(clean_data)
 
 
 class ReportingPeriodListView(PermissionMixin, ListView):
