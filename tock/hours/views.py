@@ -31,10 +31,11 @@ from .forms import (
     ReportingPeriodForm, ReportingPeriodImportForm, projects_as_choices,
     TimecardForm, TimecardFormSet, timecard_formset_factory
 )
+from tock.settings import base
 
 def float_api_get(request):
     url = 'https://api.floatschedule.com/api/v1/'
-    headers = {'Authorization': 'Bearer ' + os.environ.get('FLOAT_API_KEY')}
+    headers = {'Authorization': 'Bearer ' + base.FLOAT_API_KEY}
     endpoint = 'people'
     r = requests.get(url + endpoint, headers=headers)
     people_data = json.loads(r.content.decode().lower().strip())

@@ -9,3 +9,4 @@ applications:
   timeout: 180
   services:
     - staging-db
+    - float-service

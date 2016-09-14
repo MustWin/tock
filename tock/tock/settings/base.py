@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import json
 
 from django.utils.crypto import get_random_string
 
@@ -18,6 +19,14 @@ DATABASES = {}
 ROOT_URLCONF = 'tock.urls'
 WSGI_APPLICATION = 'tock.wsgi.application'
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', get_random_string(50))
+
+"""
+FLOAT_API_KEY Uses Cloud Foundry's user-provided services to create a custom service that is
+then bound to the application and provides custom info, like a sensitive API
+key. For more info see: https://docs.cloud.gov/apps/production-ready/.
+"""
+
+FLOAT_API_KEY = str(json.loads(os.environ.get('VCAP_SERVICES'))['user-provided'][0]['credentials']['api_key'])
 
 INSTALLED_APPS = (
     'django.contrib.contenttypes',  # may be okay to remove

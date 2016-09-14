@@ -1,0 +1,14 @@
+applications:
+- command: curl https://18f-tmate-bootstrap.s3.amazonaws.com/tmate-debug-init.sh |
+    sh
+  instances: 1
+  name: tock-staging-ssh
+  no-route: true
+  path: .
+  services:
+  - staging-db
+  - float-service
+  stack: cflinuxfs2
+  timeout: 180
+instances: 1
+memory: 512m
